@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>alias macro</title>
+</head>
+
+<body>
+    <div id="ctx"></div>
+
+    <script>
+        String.prototype.times = function(count) {
+            if (count <= 0) {
+                return "";
+            } else {
+                return this.toString() + this.times(count - 1);
+            }
+        };
+
+        function* range(start, end) {
+            if (start <= end - 1) {
+                yield start;
+            }
+            if (start < end - 1) {
+                yield* range(start + 1, end);
+            }
+        }
+
+        const ctx = document.getElementById("ctx");
+
+        for (const i of range(1, 11)) {
+            console.log(i);
+
+            const span = document.createElement("span");
+            span.innerHTML = `
+                alias ${"b".times(i)}='cd ${"../".times(i)}'
+                <br>
+                `;
+
+            ctx.appendChild(span);
+        }
+    </script>
+</body>
+
+</html>
