@@ -28,19 +28,43 @@
             }
         }
 
+
+
+        const Generator = Object.getPrototypeOf(function*() {});
+
+        const map = function*(fn) {
+            for (const elem of this) {
+                yield fn(elem);
+            }
+        }
+
+        const reduce = function(val, fn) {
+            const next = this.next();
+            if (next.end) {
+                return val;
+            }
+            return reduce(fn(val, next.value), fn);
+        }
+
+        const foreach = function(fn) {
+            for (e of this) {
+                fn(e);
+            }
+        }
+
+        Generator.prototype.map = map;
+        Generator.prototype.reduce = reduce;
+        Generator.prototype.foreach = foreach;
+
         const ctx = document.getElementById("ctx");
 
-        for (const i of range(1, 11)) {
-            console.log(i);
-
-            const span = document.createElement("span");
-            span.innerHTML = `
-                alias ${"b".times(i)}='cd ${"../".times(i)}'
-                <br>
-                `;
-
-            ctx.appendChild(span);
-        }
+        range(1, 11)
+            .map(i => `alias ${"b".times(i)}='cd ${"../".times(i)}'<br>`)
+            .foreach(line => {
+                const span = document.createElement("span");
+                span.innerHTML = line;
+                ctx.appendChild(span);
+            });
     </script>
 </body>
 
